@@ -1,0 +1,492 @@
+@import "tailwindcss";
+
+/* ============================================================
+   DESIGN TOKENS
+   Near-black base with a cold blue cast and restrained electric-blue accents.
+   ============================================================ */
+@theme {
+  /* Surfaces — black with a cold blue cast */
+  --color-base: #03060d;
+  --color-surface: #070b14;
+  --color-surface-2: #0a111c;
+  --color-surface-3: #0e1725;
+
+  /* Hairlines */
+  --color-line: #16202f;
+  --color-line-strong: #22304a;
+
+  /* Text */
+  --color-fg: #e9f1fa;
+  --color-fg-muted: #93a4bd;
+  --color-fg-subtle: #5c6e89;
+
+  /* Accents — electric blue primary, cyan technical, mint status */
+  --color-accent: #0a84ff;
+  --color-accent-soft: #4dabff;
+  --color-cyan: #22d3ee;
+  --color-mint: #34e3a0;
+  --color-amber: #f2b263;
+
+  /* Type */
+  --font-sans: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "DM Mono", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Motion */
+  --animate-marquee: marquee 42s linear infinite;
+  --animate-blink: blink 1.05s steps(2, start) infinite;
+  --animate-drift: drift 22s ease-in-out infinite alternate;
+}
+
+@keyframes marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+@keyframes drift {
+  from { transform: translate3d(-3%, -2%, 0) scale(1); }
+  to   { transform: translate3d(3%, 2%, 0) scale(1.08); }
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-base);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  color: var(--color-fg);
+}
+
+/* Keyboard focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--color-base); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+  border-radius: 99px;
+  border: 2px solid var(--color-base);
+}
+::-webkit-scrollbar-thumb:hover { background: #2e4160; }
+
+/* ============================================================
+   FLUID TYPE SCALE
+   ============================================================ */
+.t-display {
+  font-size: clamp(2.6rem, 7.2vw, 5.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.038em;
+  font-weight: 700;
+}
+.t-h2 {
+  font-size: clamp(2rem, 4.6vw, 3.4rem);
+  line-height: 1.05;
+  letter-spacing: -0.032em;
+  font-weight: 700;
+}
+.t-h3 {
+  font-size: clamp(1.2rem, 1.9vw, 1.55rem);
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+.t-statement {
+  font-size: clamp(1.7rem, 3.9vw, 3rem);
+  line-height: 1.16;
+  letter-spacing: -0.03em;
+  font-weight: 600;
+}
+.t-lead {
+  font-size: clamp(1rem, 1.35vw, 1.15rem);
+  line-height: 1.65;
+  color: var(--color-fg-muted);
+}
+
+/* Small uppercase mono metadata label */
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.shell {
+  width: 100%;
+  max-width: 84rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+@media (min-width: 768px)  { .shell { padding-inline: 2.5rem; } }
+@media (min-width: 1280px) { .shell { padding-inline: 3.5rem; } }
+
+.section {
+  padding-block: clamp(4.5rem, 10vw, 9rem);
+  position: relative;
+}
+
+/* Hairline that fades at both ends */
+.rule-fade {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-line-strong) 18%,
+    var(--color-line-strong) 82%,
+    transparent
+  );
+}
+
+/* ============================================================
+   AMBIENCE - grid, grain, glow. Decorative and deliberately subtle.
+   ============================================================ */
+.bg-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg-ambient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(90, 165, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(90, 165, 255, 0.055) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 5%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 70% at 50% 0%, #000 5%, transparent 72%);
+}
+
+/* Film grain keeps large flat dark areas from banding */
+.bg-ambient::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.glow-accent {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(120px);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Console scanlines. Static, very low contrast - reads as texture, not effect. */
+.bg-scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(120, 190, 255, 0.022) 0px,
+    rgba(120, 190, 255, 0.022) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+}
+
+/* ============================================================
+   SURFACES / CARDS
+   ============================================================ */
+.card {
+  position: relative;
+  background: linear-gradient(160deg, var(--color-surface-2) 0%, var(--color-surface) 100%);
+  border: 1px solid var(--color-line);
+  border-radius: 0.875rem;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.45s ease,
+    box-shadow 0.45s ease;
+  will-change: transform;
+}
+
+/* Cyber edge light: a thin blue bloom along the top of the card */
+.card::before {
+  content: "";
+  position: absolute;
+  inset-inline: 12%;
+  top: -1px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-accent) 70%, transparent),
+    transparent
+  );
+  opacity: 0.45;
+  transition: opacity 0.45s ease, inset-inline 0.45s ease;
+  pointer-events: none;
+}
+.card:hover::before,
+.card:focus-within::before {
+  opacity: 1;
+  inset-inline: 4%;
+}
+
+/* Gradient hairline that fades in on hover */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg, color-mix(in srgb, var(--color-accent) 55%, transparent), transparent 42%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  pointer-events: none;
+}
+
+.card:hover,
+.card:focus-within {
+  transform: translateY(-4px);
+  border-color: var(--color-line-strong);
+  box-shadow:
+    0 18px 46px -22px rgba(0, 0, 0, 0.9),
+    0 0 44px -18px rgba(10, 132, 255, 0.65);
+}
+.card:hover::after,
+.card:focus-within::after { opacity: 1; }
+
+/* Panel variant - keeps the card surface, drops the hover lift */
+.card-static:hover,
+.card-static:focus-within {
+  transform: none;
+  border-color: var(--color-line);
+  box-shadow: 0 24px 70px -34px rgba(0, 0, 0, 0.95);
+}
+.card-static::after { display: none; }
+
+/* Flat variant for dense lists */
+.card-flat {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 0.75rem;
+  transition: border-color 0.35s ease, background-color 0.35s ease;
+}
+.card-flat:hover {
+  border-color: var(--color-line-strong);
+  background: var(--color-surface-2);
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding-inline: 1.5rem;
+  border-radius: 0.625rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    color 0.25s ease;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: var(--color-accent);
+  color: #ffffff;
+  box-shadow: 0 6px 20px -10px rgba(10, 132, 255, 0.75);
+}
+.btn-primary:hover {
+  background: var(--color-accent-soft);
+  box-shadow: 0 10px 28px -10px rgba(10, 132, 255, 0.9);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-fg);
+  border-color: var(--color-line-strong);
+}
+.btn-ghost:hover {
+  border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  background: var(--color-surface-2);
+}
+
+.btn-sm {
+  min-height: 2.75rem;
+  padding-inline: 1rem;
+  font-size: 0.8125rem;
+}
+
+/* Arrow nudge on hover */
+.btn .arrow,
+.link-arrow .arrow {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn:hover .arrow,
+.link-arrow:hover .arrow {
+  transform: translate(2px, -2px);
+}
+
+.link-arrow {
+  color: var(--color-fg-muted);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+.link-arrow:hover { color: var(--color-accent); }
+
+/* ============================================================
+   PRIMITIVES
+   ============================================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--color-line-strong);
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-surface-2) 70%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.375rem;
+  background: var(--color-surface-2);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: var(--color-fg-subtle);
+  white-space: nowrap;
+  max-width: 100%;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+/* A long nowrap tag sets a min-content floor its card cannot shrink past,
+   which pushed the credential cards ~24px wide at 320px. Let tags wrap on
+   the narrowest screens. */
+@media (max-width: 400px) {
+  .tag { white-space: normal; }
+}
+.group:hover .tag {
+  color: var(--color-fg-muted);
+  border-color: var(--color-line-strong);
+}
+
+.text-gradient-accent {
+  background: linear-gradient(100deg, var(--color-accent) 0%, var(--color-accent-soft) 40%, var(--color-cyan) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Terminal caret */
+.caret {
+  display: inline-block;
+  width: 0.55ch;
+  height: 1.05em;
+  translate: 0 0.16em;
+  background: var(--color-accent);
+  animation: var(--animate-blink);
+}
+
+/* Marquee */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: var(--animate-marquee);
+}
+.marquee-mask {
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-wrap:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  html { scroll-behavior: auto !important; }
+  .reveal { opacity: 1; transform: none; }
+  .marquee-track { animation: none; }
+  .caret { animation: none; opacity: 1; }
+  .card:hover, .card:focus-within { transform: none; }
+}
